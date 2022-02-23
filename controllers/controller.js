@@ -13,11 +13,15 @@ class Controller {
         })
         .then((data) => {
             if(data) {
+                let userId = data.id
                 let validate = bcrypt.compareSync(password, data.password)
                 if(validate) {
-                    res.redirect('')
+                    res.redirect(`/home/${userId}`)
                 }
             }
+        })
+        .catch((err) => {
+            res.send(err)
         })
         
 

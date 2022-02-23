@@ -6,7 +6,7 @@ router.get('/', Controller.loginPage)
 router.post('/', Controller.login)
 router.get('/register', Controller.registerForm)
 router.post('/register', Controller.register)
-router.get('/home', Controller.home)
+router.get('/home/:UserId', Controller.home)
 
 
 // router.get('/register', Controller.registerForm)
