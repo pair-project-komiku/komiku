@@ -13,11 +13,21 @@ class Controller {
         })
         .then((data) => {
             if(data) {
+                let userId = data.id
                 let validate = bcrypt.compareSync(password, data.password)
                 if(validate) {
-                    res.redirect('')
+                    return res.redirect(`/home/${userId}`)
+                } else {
+                    const error = 'password or username wrong'
+                    return res.redirect(`/?err=${error}`)
                 }
+            } else {
+                const error = "You're not registered"
+                return res.redirect(`/register?err=${error}`)
             }
+        })
+        .catch((err) => {
+            res.send(err)
         })
         
 
