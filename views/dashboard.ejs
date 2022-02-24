@@ -60,8 +60,13 @@
 </head>
 <body>
     <%- include('./partials/navbarInPage') %>
+    <% if(notif) { %>
+      <p style="color: green;"><%= notif %></p>
+    <% } %>
     <h1>Welcome, <b><%= data.usernameTitle %></b></h1>
-    <p><b style="color: blueviolet;"><%= data.status %> User</b></p>
+    <h2>Alias, <i><%= data.Profile.alias %></i></h2>
+    <h3><b style="color: blueviolet;"><%= data.status %> User</b></h3>
+    <p>About Me: <%= data.Profile.biodata %></p>
     <div class="row">
         <% data.Comics.forEach(el=> { %>
       <div class="column">

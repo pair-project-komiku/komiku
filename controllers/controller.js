@@ -7,7 +7,8 @@ class Controller {
         // console.log(req.query)
 
         let obj = {
-            error: req.query.error
+            error: req.query.error,
+            notif: req.query.notif
         }
         res.render('login', obj)
     }
@@ -56,15 +57,49 @@ class Controller {
             updatedAt
         })
             .then((data) => {
-                res.redirect('/')
+                // res.redirect('/')
+                console.log(data.id)
+                res.redirect(`/createProfile?id=${data.id}`)
             })
             .catch((err) => {
                 res.send(err)
             })
     }
+    static createProfileForm(req, res) {
+        const id = req.query.id
+        res.render('createProfileForm', {id})
+    }
+    static createProfile(req, res) {
+        const {alias, biodata} = req.body
+        console.log(req.body)
+        const UserId = req.query.id
+        const createdAt = new Date()
+        const updatedAt = new Date()
+        Profile.create({
+            alias,
+            biodata,
+            UserId,
+            createdAt,
+            updatedAt
+        })
+        .then((data) => {
+            const notif = "Profile created"
+            res.redirect(`/?notif=${notif}`)
+        })
+        .catch((err) => {
+            res.send(err)
+        })
+    }
     static dashboard(req, res) {
         User.findOne({
-            include: Comic,
+            include: [
+                {
+                    model: Comic
+                },
+                {
+                    model: Profile
+                }
+            ],
             where: {
                 id: req.session.userId
             }
@@ -75,6 +110,7 @@ class Controller {
                     changeText,
                     notif: req.query.notif
                 }
+                console.log(data)
                 res.render('dashboard', obj)
             })
     }
@@ -119,6 +155,21 @@ class Controller {
             })
     }
 
+    static profileSettingForm(req, res) {
+        console.log(req.params.UserId)
+        Profile.findOne({
+            where: {
+                UserId: req.params.UserId
+            }
+        })
+        .then((data) => {
+            res.render('profileSettingForm', {data})
+        })
+        .catch((err) => {
+            res.send(err)
+        })
+    }
+
     static logout(req, res) {
         req.session.destroy((err) => {
             if (err) console.log(err)
@@ -127,6 +178,7 @@ class Controller {
             }
         })
     }
+
     static postComicForm(req, res) {
         User.findOne({
             where: {
