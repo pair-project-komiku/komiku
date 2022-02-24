@@ -7,15 +7,4 @@ const isLogin = (req, res, next) => {
     }
 }
 
-// const isPremium = (req, res, next) => {
-//     if(req.session.status !== 'Premium') {
-//         const error = "You don't have permission!"
-//         res.redirect(`/?error=${error}`)
-//     } else {
-//         next()
-//     }
-// }
-
-// module.exports= {isLogin, isPremium}
-
 module.exports = isLogin
