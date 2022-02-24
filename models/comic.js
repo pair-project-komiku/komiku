@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     imgUrl: DataTypes.STRING,
     UserId: DataTypes.INTEGER,
-    TypeId: DataTypes.INTEGER
+    TypeId: DataTypes.INTEGER,
+    synopsis: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Comic',
