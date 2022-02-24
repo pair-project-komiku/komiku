@@ -12,7 +12,6 @@ router.use(isLogin)
 
 router.get('/logout', Controller.logout)
 
-
 router.get('/home/:userId', Controller.home)
 
 router.get('/postComic/:userId', Controller.postComicForm)
@@ -20,6 +19,8 @@ router.get('/postComic/:userId', Controller.postComicForm)
 router.post('/postComic/:userId', Controller.postComic)
 
 router.get('/readComic/:userId', Controller.readComicList)
+
+router.get("/myComic/:userId", Controller.myComic)
 
 // router.get('/register', Controller.registerForm)
 // router.get('/login', Controller.loginForm)
