@@ -3,7 +3,12 @@ const bcrypt = require('bcryptjs')
 
 class Controller {
     static loginPage(req, res) {
-        res.render('login')
+        console.log(req.query)
+
+        let obj = {
+            error: req.query.error
+        }
+        res.render('login', obj)
     }
     static login(req, res) {
         console.log(req.body)
@@ -16,7 +21,9 @@ class Controller {
                 let userId = data.id
                 let validate = bcrypt.compareSync(password, data.password)
                 if(validate) {
-                    return res.redirect(`/home/${userId}`)
+                    req.session.userId = data.id
+                    req.session.status = data.status
+                    return res.redirect(`/home`)
                 } else {
                     const error = 'password or username wrong'
                     return res.redirect(`/?err=${error}`)

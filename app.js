@@ -1,12 +1,25 @@
 const express = require('express')
 const app = express()
-const port = 3000
 const router = require('./routes/index')
+const session = require('express-session')
+const port = 3000
 
 app.set('view engine', 'ejs')
 
 app.use(express.urlencoded({extended:true}))
 
+app.use(session({
+    secret: 'kepo luuh',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        sameSite: true  //untuk security csrf attack
+    }
+  }))
+
 app.use('/', router)
 
-app.listen(3000)
+app.listen(port, () => {
+    console.log('This app is running at port: ', port)
+})
