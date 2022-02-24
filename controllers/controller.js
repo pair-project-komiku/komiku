@@ -1,4 +1,4 @@
-const {User} = require('../models/index')
+const {User, Profile, Comic, Type} = require('../models/index')
 const bcrypt = require('bcryptjs')
 
 class Controller {
@@ -70,7 +70,8 @@ class Controller {
         })
         .then((data) => {
             let obj = {
-                data
+                data,
+                notif: req.query.notif
             }
             res.render('home', obj)
         })
@@ -94,6 +95,36 @@ class Controller {
                 data
             }
             res.render('postComicForm', obj)
+        })
+    }
+    static postComic(req, res) {
+        console.log(req.body)
+        const {title, imgUrl, type, synopsis} = req.body
+        const createdAt = new Date()
+        const updatedAt = new Date()
+        Type.findOne({
+            where: {
+                name: type
+            }
+        })
+        .then((type) => {
+
+            return Comic.create({
+                title,
+                imgUrl,
+                UserId: req.params.userId,
+                TypeId: type.id,
+                createdAt,
+                updatedAt,
+                synopsis
+            })
+        })
+        .then((data) => {
+            const notif="Your Comic posted successfully!"
+            return res.redirect(`home/${req.params.userId}/?notif=${notif}`)
+        })
+        .catch((err) => {
+            res.send(err)
         })
     }
 }
