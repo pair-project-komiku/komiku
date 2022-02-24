@@ -76,6 +76,47 @@ class Controller {
                 res.render('dashboard', obj)
             })
     }
+
+    static explore(req, res) {
+        User.findOne({
+            where: {
+                id: req.session.userId
+            }
+        })
+        .then((user) => {
+            console.log(user.status)
+            if (user.status === 'Premium') {
+                Comic.findAll({
+                    include: User,
+                    order: [['updatedAt', 'DESC']]
+                })
+                .then((data) => {
+                    res.render('explore', {data})
+                })
+                .catch((err) => {
+                    res.send(err)
+                })
+            } else {
+                Comic.findAll({
+                    include: User,
+                    where: {
+                        TypeId: 1
+                    },
+                    order: [['updatedAt', 'DESC']],
+                })
+                .then((data) => {
+                    res.render('explore', {data})
+                })
+                .catch((err) => {
+                    res.send(err)
+                })
+            }
+        })
+        .catch((err) => {
+            res.send(err)
+        })
+    }
+
     static logout(req, res) {
         req.session.destroy((err) => {
             if (err) console.log(err)

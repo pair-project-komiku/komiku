@@ -16,6 +16,8 @@ router.get('/logout', Controller.logout)
 
 router.get('/dashboard', Controller.dashboard)
 
+router.get('/explore', Controller.explore)
+
 router.get('/delete/:ComicId', Controller.delete)
 
 router.get('/edit/:ComicId', Controller.editForm)
