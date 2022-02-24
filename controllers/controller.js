@@ -6,7 +6,8 @@ class Controller {
         // console.log(req.query)
 
         let obj = {
-            error: req.query.error
+            error: req.query.error,
+            notif: req.query.notif
         }
         res.render('login', obj)
     }
@@ -35,8 +36,6 @@ class Controller {
             .catch((err) => {
                 res.send(err)
             })
-
-
     }
     static registerForm(req, res) {
         res.render('registerForm')
@@ -55,11 +54,34 @@ class Controller {
             updatedAt
         })
             .then((data) => {
-                res.redirect('/')
+                console.log(data)
+                res.redirect(`/createProfileForm?id=${data.id}`)
             })
             .catch((err) => {
                 res.send(err)
             })
+    }
+    static createProfileForm(req, res) {
+        const id = req.query.id
+        res.render('createProfileForm', {id})
+    }
+    static createProfile(req, res) {
+        const {alias, biodata} = req.body
+        console.log(req.body)
+        const UserId = req.query.id
+        const createdAt = new Date()
+        const updatedAt = new Date()
+        Profile.create({
+            alias,
+            biodata,
+            UserId,
+            createdAt,
+            updatedAt
+        })
+        .then((data) => {
+            const notif = "Profile created"
+            res.redirect(`/?notif=${notif}`)
+        })
     }
     static dashboard(req, res) {
         User.findOne({
@@ -75,6 +97,42 @@ class Controller {
                 }
                 res.render('dashboard', obj)
             })
+    }
+    static profileSettingForm(req, res) {
+        Profile.findOne({
+            where: {
+                id: req.session.userId
+            }
+        })
+        .then((data) => {
+            res.render('profileSettingForm', {data})
+        })
+    }
+    static profileSettingUpdate(req, res) {
+        const {alias, biodata} = req.body
+        const UserId = req.session.userId
+        const updatedAt = new Date()
+        console.log(req.body)
+        Profile.update(
+            {
+                alias,
+                biodata,
+                UserId,
+                updatedAt
+            },
+            {
+                where: {
+                    id: req.query.id
+                }
+            }
+        )
+        .then((data) => {
+            const notif = 'Profile updated'
+            res.redirect(`/dashboard?notif=${notif}`)
+        })
+        .catch((err) => {
+            res.send(err)
+        })
     }
     static logout(req, res) {
         req.session.destroy((err) => {

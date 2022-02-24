@@ -61,6 +61,9 @@
 <body>
     <%- include('./partials/navbarInPage') %>
     <h1>Welcome, <b><%= data.username %>!</b></h1>
+    <% if(notif) { %>
+      <p style="color: green;"><%= notif %></p>
+    <% } %>
     <div class="row">
         <% data.Comics.forEach(el=> { %>
       <div class="column">

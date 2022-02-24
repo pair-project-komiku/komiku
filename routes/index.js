@@ -8,13 +8,18 @@ router.get('/', Controller.loginPage)
 router.post('/', Controller.login)
 router.get('/register', Controller.registerForm)
 router.post('/register', Controller.register)
-
+router.get('/createProfile', Controller.createProfileForm)
+router.post('/createProfile', Controller.createProfile)
 
 router.use(isLogin)
 
 router.get('/logout', Controller.logout)
 
 router.get('/dashboard', Controller.dashboard)
+
+router.get('/profileSettings', Controller.profileSettingForm)
+
+router.post('/profileSettings', Controller.profileSettingUpdate)
 
 router.get('/delete/:ComicId', Controller.delete)
 
