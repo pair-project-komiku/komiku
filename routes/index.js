@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Controller = require('../controllers/controller')
 const {isLogin, isPremium} = require('../middleware/permission')
+const upload = require('../middleware/multer.js')
 
 router.get('/', Controller.loginPage)
 router.post('/', Controller.login)
@@ -17,10 +18,6 @@ router.get('/home/:userId', Controller.home)
 
 router.get('/postComic/:userId', Controller.postComicForm)
 
-router.post('/postComic/:userId', Controller.postComic)
-
-// router.get('/register', Controller.registerForm)
-// router.get('/login', Controller.loginForm)
-
+router.post('/postComic/:userId', upload.single('imgUrl') , Controller.postComic)
 
 module.exports = router

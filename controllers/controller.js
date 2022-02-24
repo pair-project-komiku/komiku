@@ -97,31 +97,25 @@ class Controller {
             res.render('postComicForm', obj)
         })
     }
-    static postComic(req, res) {
-        console.log(req.body)
-        const {title, imgUrl, type, synopsis} = req.body
-        const createdAt = new Date()
-        const updatedAt = new Date()
-        Type.findOne({
-            where: {
-                name: type
-            }
-        })
-        .then((type) => {
 
-            return Comic.create({
-                title,
-                imgUrl,
-                UserId: req.params.userId,
-                TypeId: type.id,
-                createdAt,
-                updatedAt,
-                synopsis
-            })
-        })
+    static postComic(req, res) {
+        const UserId = req.session.userId
+        const { title, TypeId, synopsis } = req.body;
+        // console.log(req.body)
+        const imagePath = req.file.path;
+        const newComic = {
+            title: title,
+            imgUrl: imagePath,
+            UserId: UserId,
+            TypeId: TypeId,
+            synopsis: synopsis
+        }
+        // console.log(newComic)
+         Comic.
+         create(newComic)
         .then((data) => {
             const notif="Your Comic posted successfully!"
-            return res.redirect(`home/${req.params.userId}/?notif=${notif}`)
+            return res.redirect(`/home/${req.params.userId}/?notif=${notif}`)
         })
         .catch((err) => {
             res.send(err)
