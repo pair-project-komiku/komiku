@@ -1,6 +1,7 @@
 const { User, Profile, Comic, Type } = require('../models/index')
 const bcrypt = require('bcryptjs')
 const changeText = require('../helpers/type.js')
+const e = require('express')
 
 class Controller {
     static loginPage(req, res) {
@@ -71,7 +72,7 @@ class Controller {
     }
     static createProfile(req, res) {
         const {alias, biodata} = req.body
-        console.log(req.body)
+        // console.log(req.body)
         const UserId = req.query.id
         const createdAt = new Date()
         const updatedAt = new Date()
@@ -110,23 +111,28 @@ class Controller {
                     changeText,
                     notif: req.query.notif
                 }
-                console.log(data)
+                // console.log(data)
                 res.render('dashboard', obj)
             })
     }
 
     static explore(req, res) {
+        // console.log(req.query)
+        // console.log(req.query.order)
+        let order = 'DESC';
+        if (req.query.order) {
+            order = req.query.order
+        }
         User.findOne({
             where: {
                 id: req.session.userId
             }
         })
             .then((user) => {
-                console.log(user.status)
                 if (user.status === 'Premium') {
                     Comic.findAll({
                         include: User,
-                        order: [['updatedAt', 'DESC']]
+                        order: [['updatedAt', order]]
                     })
                         .then((data) => {
                             res.render('explore', { data, changeText })
@@ -140,7 +146,7 @@ class Controller {
                         where: {
                             TypeId: 1
                         },
-                        order: [['updatedAt', 'DESC']],
+                        order: [['updatedAt', order]],
                     })
                         .then((data) => {
                             res.render('explore', { data, changeText })
@@ -156,7 +162,7 @@ class Controller {
     }
 
     static profileSettingForm(req, res) {
-        console.log(req.params.UserId)
+        // console.log(req.params.UserId)
         Profile.findOne({
             where: {
                 UserId: req.params.UserId

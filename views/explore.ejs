@@ -60,6 +60,11 @@
 </head>
 <body>
     <%- include('./partials/navbarInPage') %>
+    <div class="navbar-text">
+      <label>Order By:</label>
+      <a href="/explore?order=ASC"><button type="button" class="btn btn-dark">Oldest</button></a>
+      <a href="/explore?order=DESC"><button type="button" class="btn btn-success">Newest</button></a>
+    </div>
     <div class="row">
         <% data.forEach(el=> { %>
       <div class="column">
