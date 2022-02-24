@@ -1,1 +1,2 @@
 biar folder assets kosong ke push
+bismillah deploy
