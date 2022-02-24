@@ -1,31 +1,28 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/home/<%= dataUser.id %>">KOMIKU</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/readComic/<%= dataUser.id %>">Read Comic</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/postComic/<%= dataUser.id %>">Post Comic</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/myComic/<%= dataUser.id %>">My Comic</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/logout">Logout</a>
-          </li>
-        </ul>
-        <span class="navbar-text">
-          <form action="" method="">
-              <p>Search Comic</p>
-              <input type="text" name="Search">
-              <button type="submit" class="btn btn-outline-primary">Search</button>
-          </form>
-        </span>
-      </div>
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/dashboard">KOMIKU</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="">Explore</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/postComic">Post Comic</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/logout">Logout</a>
+        </li>
+      </ul>
+      <span class="navbar-text">
+        <form action="" method="">
+            <p>Search Comic</p>
+            <input type="text" name="Search">
+            <button type="submit" class="btn btn-outline-primary">Search</button>
+        </form>
+      </span>
     </div>
-  </nav>
+  </div>
+</nav>

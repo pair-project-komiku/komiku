@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 
 class Controller {
     static loginPage(req, res) {
-        console.log(req.query)
+        // console.log(req.query)
 
         let obj = {
             error: req.query.error
@@ -11,7 +11,7 @@ class Controller {
         res.render('login', obj)
     }
     static login(req, res) {
-        console.log(req.body)
+        // console.log(req.body)
         let { username, password } = req.body
         User.findOne({
             where: { username }
@@ -22,15 +22,14 @@ class Controller {
                     let validate = bcrypt.compareSync(password, data.password)
                     if (validate) {
                         req.session.userId = data.id
-                        req.session.status = data.status
-                        return res.redirect(`/home/${userId}`)
+                        res.redirect(`/dashboard`)
                     } else {
                         const error = 'password or username wrong'
-                        return res.redirect(`/?err=${error}`)
+                        res.redirect(`/?err=${error}`)
                     }
                 } else {
                     const error = "You're not registered"
-                    return res.redirect(`/register?err=${error}`)
+                    res.redirect(`/register?err=${error}`)
                 }
             })
             .catch((err) => {
@@ -43,7 +42,7 @@ class Controller {
         res.render('registerForm')
     }
     static register(req, res) {
-        console.log(req.body)
+        // console.log(req.body)
         const { email, username, status, password } = req.body
         const createdAt = new Date()
         const updatedAt = new Date()
@@ -62,18 +61,19 @@ class Controller {
                 res.send(err)
             })
     }
-    static home(req, res) {
+    static dashboard(req, res) {
         User.findOne({
+            include: Comic,
             where: {
-                id: req.params.userId
+                id: req.session.userId
             }
         })
-            .then((dataUser) => {
+            .then((data) => {
                 let obj = {
-                    dataUser,
+                    data,
                     notif: req.query.notif
                 }
-                res.render('home', obj)
+                res.render('dashboard', obj)
             })
     }
     static logout(req, res) {
@@ -87,122 +87,110 @@ class Controller {
     static postComicForm(req, res) {
         User.findOne({
             where: {
-                id: req.params.userId
+                id: req.session.userId
             }
         })
-            .then((dataUser) => {
+            .then((data) => {
                 let obj = {
-                    dataUser
+                    data
                 }
                 res.render('postComicForm', obj)
             })
     }
-    static postComic(req, res) {
-        console.log(req.body)
-        const { title, imgUrl, type, synopsis } = req.body
-        const createdAt = new Date()
-        const updatedAt = new Date()
-        Type.findOne({
-            where: {
-                name: type
-            }
-        })
-            .then((type) => {
 
-                return Comic.create({
-                    title,
-                    imgUrl,
-                    UserId: req.params.userId,
-                    TypeId: type.id,
-                    createdAt,
-                    updatedAt,
-                    synopsis
-                })
-            })
+    static postComic(req, res) {
+        // console.log(req.body)
+        const UserId = req.session.userId
+        const { title, TypeId, synopsis } = req.body
+        const imagePath = req.file.path
+        const newComic = {
+            title: title,
+            imgUrl: imagePath,
+            UserId: UserId,
+            TypeId: TypeId,
+            synopsis: synopsis
+        }
+        Comic.create(newComic)
             .then((data) => {
-                const notif = "Your Comic posted successfully!"
-                return res.redirect(`/home/${req.params.userId}/?notif=${notif}`)
+                //  const notif = "Your Comic posted successfully!"
+                res.redirect(`/dashboard`)
             })
             .catch((err) => {
                 res.send(err)
             })
     }
-    static readComicList(req, res) {
-        let dataComic
 
-        Comic.findAll({
-            include: [
-                {
-                    model: User
-                },
-                {
-                    model: Type
+    static editForm(req, res) {
+        // console.log(req.params)
+        const comicId = req.params.ComicId;
+        Comic.
+            findOne({
+                where: {
+                    id: comicId
                 }
-            ]
-        })
-            .then((data) => {
-                dataComic = data
-                return User.findOne({
-                    where: {
-                        id: req.params.userId
-                    }
-                })
             })
-            .then((dataUser) => {
-                console.log(dataComic)
-                let obj = {
-                    dataComic,
-                    dataUser,
-                    userId: req.params.userId
-                }
-                res.render('comicList', obj)
+            .then((data) => {
+                res.render('editForm', { data })
             })
     }
-    static myComic(req, res) {
-        // let dataComic = 
-        // Comic.findAll({
-        //     where:{
-        //         UserId: req.params.userId
-        //     }
-        // })
-        // .then((data) => {
-        //     dataComic=data
-        //     return User.findOne({
-        //         where: {
-        //             id: req.params.userId
-        //         }
-        //     })
-        // })
-        let dataUser
-        User.findOne({
-            include: [{
-                    model: Profile
-                }],
-            where: {
-                id: req.params.userId
-            }
-        })
-        .then((data) => {
-            dataUser = data
-            console.log(dataUser)
-            return Comic.findAll({
-                include:[{
-                    model: Type
-                }],
+
+    static submitEdit(req, res) {
+        const { title, TypeId, synopsis } = req.body
+        if (!req.file) {
+            Comic.
+                update({
+                    title: title,
+                    TypeId: TypeId,
+                    synopsis: synopsis
+                },
+                    {
+                        where: {
+                            id: req.params.ComicId
+                        }
+                    })
+                .then(() => {
+                    res.redirect('/dashboard')
+                })
+                .catch((err) => {
+                    res.send(err)
+                })
+        } else {
+            Comic.
+                update({
+                    title: title,
+                    TypeId: TypeId,
+                    synopsis: synopsis,
+                    imgUrl: req.file.path
+                },
+                    {
+                        where: {
+                            id: req.params.ComicId
+                        }
+                    })
+                .then(() => {
+                    res.redirect('/dashboard')
+                })
+                .catch((err) => {
+                    res.send(err)
+                })
+        }
+    }
+
+    static delete(req, res) {
+        const comicId = req.params.ComicId;
+        Comic.
+            destroy({
                 where: {
-                    UserId: req.params.userId
+                    id: comicId
                 }
             })
-        })
-        .then((dataComic) => {
-            let obj = {
-                dataUser,
-                dataComic,
-                notif:req.query.notif
-            }
-            res.render('myComic', obj)
-        })
-        
+            .then(() => {
+                res.redirect('/dashboard')
+            })
+            .catch((err) => {
+                res.send(err)
+            })
+
     }
 }
 
