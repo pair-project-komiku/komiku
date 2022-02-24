@@ -11,6 +11,26 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+    
+    get usernameTitle() {
+      const title = [
+        'the brilliant artist',
+        'the great artist',
+        'the uprising artist',
+        'the best artist',
+        'the fantastic artist'
+      ]
+
+      function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+      }
+
+      let random = getRandomInt(title.length)
+
+      let randomNum = Math.random
+      return `${this.username} ${title[random]}`
+    }
+
     static associate(models) {
       // define association here
       User.hasOne(models.Profile, {foreignKey:'UserId'})

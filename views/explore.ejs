@@ -68,11 +68,11 @@
           <br>
           <h3><%= el.title %></h3>
           <p><%= el.synopsis %></p>
-            <% if (el.TypeId === 1) { %>
-                <p><b style="color: black;">Regular</b></p>
-            <% } else { %>
-                <p><b style="color: goldenrod;">Premium</b></p>
-            <% } %>
+          <% if (el.TypeId === 1) { %>
+            <p><b style="color: black;"><%= changeText('Regular') %></b></p>
+          <% } else { %>
+            <p><b style="color: goldenrod;"><%= changeText('Premium') %></b></p>
+          <% } %>
           <h5>Comic By: <%= el.User.username %> </h5>
         </div>
       </div>

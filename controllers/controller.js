@@ -1,5 +1,6 @@
 const { User, Profile, Comic, Type } = require('../models/index')
 const bcrypt = require('bcryptjs')
+const changeText = require('../helpers/type.js')
 
 class Controller {
     static loginPage(req, res) {
@@ -71,6 +72,7 @@ class Controller {
             .then((data) => {
                 let obj = {
                     data,
+                    changeText,
                     notif: req.query.notif
                 }
                 res.render('dashboard', obj)
@@ -83,38 +85,38 @@ class Controller {
                 id: req.session.userId
             }
         })
-        .then((user) => {
-            console.log(user.status)
-            if (user.status === 'Premium') {
-                Comic.findAll({
-                    include: User,
-                    order: [['updatedAt', 'DESC']]
-                })
-                .then((data) => {
-                    res.render('explore', {data})
-                })
-                .catch((err) => {
-                    res.send(err)
-                })
-            } else {
-                Comic.findAll({
-                    include: User,
-                    where: {
-                        TypeId: 1
-                    },
-                    order: [['updatedAt', 'DESC']],
-                })
-                .then((data) => {
-                    res.render('explore', {data})
-                })
-                .catch((err) => {
-                    res.send(err)
-                })
-            }
-        })
-        .catch((err) => {
-            res.send(err)
-        })
+            .then((user) => {
+                console.log(user.status)
+                if (user.status === 'Premium') {
+                    Comic.findAll({
+                        include: User,
+                        order: [['updatedAt', 'DESC']]
+                    })
+                        .then((data) => {
+                            res.render('explore', { data, changeText })
+                        })
+                        .catch((err) => {
+                            res.send(err)
+                        })
+                } else {
+                    Comic.findAll({
+                        include: User,
+                        where: {
+                            TypeId: 1
+                        },
+                        order: [['updatedAt', 'DESC']],
+                    })
+                        .then((data) => {
+                            res.render('explore', { data, changeText })
+                        })
+                        .catch((err) => {
+                            res.send(err)
+                        })
+                }
+            })
+            .catch((err) => {
+                res.send(err)
+            })
     }
 
     static logout(req, res) {

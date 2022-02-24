@@ -60,7 +60,8 @@
 </head>
 <body>
     <%- include('./partials/navbarInPage') %>
-    <h1>Welcome, <b><%= data.username %>!</b></h1>
+    <h1>Welcome, <b><%= data.usernameTitle %></b></h1>
+    <p><b style="color: blueviolet;"><%= data.status %> User</b></p>
     <div class="row">
         <% data.Comics.forEach(el=> { %>
       <div class="column">
@@ -68,11 +69,11 @@
           <img class="card-img-top" src="<%= el.imgUrl %>" alt="<%= el.title %>" width="300px" height="300px">
           <h3><%= el.title %></h3>
           <p><%= el.synopsis %></p>
-            <% if (el.TypeId === 1) { %>
-                <p><b style="color: black;">Regular</b></p>
-            <% } else { %>
-                <p><b style="color: goldenrod;">Premium</b></p>
-            <% } %>
+          <% if (el.TypeId === 1) { %>
+            <p><b style="color: black;"><%= changeText('Regular') %></b></p>
+          <% } else { %>
+            <p><b style="color: goldenrod;"><%= changeText('Premium') %></b></p>
+          <% } %>
           <div class="button" style="display: flex; justify-content: center;">
           <a href="/edit/<%= el.id %>"><button type="button" class="btn btn-warning mx-1">Edit</button></a><a href="/delete/<%= el.id %>"><button type="button" class="btn btn-danger">Delete</button></a>
          </div>
