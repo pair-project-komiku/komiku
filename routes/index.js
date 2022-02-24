@@ -10,10 +10,12 @@ router.post('/register', Controller.register)
 
 router.use(isLogin)
 
-router.use(isPremium)
+router.get('/logout', Controller.logout)
 
 
-router.get('/home', Controller.home)
+router.get('/home/:userId', Controller.home)
+
+router.get('/postComic/:userId', Controller.postComicForm)
 
 
 // router.get('/register', Controller.registerForm)
