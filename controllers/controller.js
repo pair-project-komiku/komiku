@@ -68,9 +68,9 @@ class Controller {
                 id: req.params.userId
             }
         })
-        .then((data) => {
+        .then((dataUser) => {
             let obj = {
-                data,
+                dataUser,
                 notif: req.query.notif
             }
             res.render('home', obj)
@@ -90,9 +90,9 @@ class Controller {
                 id:req.params.userId
             }
         })
-        .then((data) => {
+        .then((dataUser) => {
             let obj = {
-                data
+                dataUser
             }
             res.render('postComicForm', obj)
         })
@@ -121,10 +121,41 @@ class Controller {
         })
         .then((data) => {
             const notif="Your Comic posted successfully!"
-            return res.redirect(`home/${req.params.userId}/?notif=${notif}`)
+            return res.redirect(`/home/${req.params.userId}/?notif=${notif}`)
         })
         .catch((err) => {
             res.send(err)
+        })
+    }
+    static readComicList(req, res) {
+        let dataComic
+
+        Comic.findAll({
+            include: [
+                {
+                    model: User
+                },
+                {
+                    model: Type
+                }
+            ]
+        })
+        .then((data) => {
+            dataComic = data
+            return User.findOne({
+                where: {
+                    id: req.params.userId
+                }
+            })
+        })
+        .then((dataUser) => {
+            console.log(dataComic)
+            let obj ={
+                dataComic,
+                dataUser,
+                userId: req.params.userId
+            }
+            res.render('comicList', obj)
         })
     }
 }

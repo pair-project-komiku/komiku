@@ -19,6 +19,8 @@ router.get('/postComic/:userId', Controller.postComicForm)
 
 router.post('/postComic/:userId', Controller.postComic)
 
+router.get('/readComic/:userId', Controller.readComicList)
+
 // router.get('/register', Controller.registerForm)
 // router.get('/login', Controller.loginForm)
 
