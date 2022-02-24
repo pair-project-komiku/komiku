@@ -15,7 +15,7 @@
 
 <body>
     <%- include('./partials/navbarInPage') %>
-        <h1>What art you gonna share today?</h1>
+        <h1>Editing, <b><%= data.title %></b></h1>
         <div>
             <form action="/edit/<%= data.id %>" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
