@@ -23,7 +23,7 @@ class Controller {
                 if(validate) {
                     req.session.userId = data.id
                     req.session.status = data.status
-                    return res.redirect(`/home`)
+                    return res.redirect(`/home/${userId}`)
                 } else {
                     const error = 'password or username wrong'
                     return res.redirect(`/?err=${error}`)
@@ -63,7 +63,38 @@ class Controller {
         })   
     }
     static home(req, res) {
-        res.render('home')
+        User.findOne({
+            where: {
+                id: req.params.userId
+            }
+        })
+        .then((data) => {
+            let obj = {
+                data
+            }
+            res.render('home', obj)
+        })
+    }
+    static logout(req,res) {
+        req.session.destroy((err) => {
+            if(err) console.log(err)
+            else {
+                res.redirect('/')
+            }
+        })
+    }
+    static postComicForm(req, res) {
+        User.findOne({
+            where: {
+                id:req.params.userId
+            }
+        })
+        .then((data) => {
+            let obj = {
+                data
+            }
+            res.render('postComicForm', obj)
+        })
     }
 }
 
