@@ -1,4 +1,4 @@
-const {User, Profile, Comic, Type} = require('../models/index')
+const { User, Profile, Comic, Type } = require('../models/index')
 const bcrypt = require('bcryptjs')
 
 class Controller {
@@ -12,31 +12,31 @@ class Controller {
     }
     static login(req, res) {
         console.log(req.body)
-        let {username, password} = req.body
+        let { username, password } = req.body
         User.findOne({
-            where: {username}
+            where: { username }
         })
-        .then((data) => {
-            if(data) {
-                let userId = data.id
-                let validate = bcrypt.compareSync(password, data.password)
-                if(validate) {
-                    req.session.userId = data.id
-                    req.session.status = data.status
-                    return res.redirect(`/home/${userId}`)
+            .then((data) => {
+                if (data) {
+                    let userId = data.id
+                    let validate = bcrypt.compareSync(password, data.password)
+                    if (validate) {
+                        req.session.userId = data.id
+                        req.session.status = data.status
+                        return res.redirect(`/home/${userId}`)
+                    } else {
+                        const error = 'password or username wrong'
+                        return res.redirect(`/?err=${error}`)
+                    }
                 } else {
-                    const error = 'password or username wrong'
-                    return res.redirect(`/?err=${error}`)
+                    const error = "You're not registered"
+                    return res.redirect(`/register?err=${error}`)
                 }
-            } else {
-                const error = "You're not registered"
-                return res.redirect(`/register?err=${error}`)
-            }
-        })
-        .catch((err) => {
-            res.send(err)
-        })
-        
+            })
+            .catch((err) => {
+                res.send(err)
+            })
+
 
     }
     static registerForm(req, res) {
@@ -44,7 +44,7 @@ class Controller {
     }
     static register(req, res) {
         console.log(req.body)
-        const {email, username, status, password} = req.body
+        const { email, username, status, password } = req.body
         const createdAt = new Date()
         const updatedAt = new Date()
         User.create({
@@ -55,12 +55,12 @@ class Controller {
             createdAt,
             updatedAt
         })
-        .then((data) => {
-            res.redirect('/')
-        })
-        .catch((err) => {
-            res.send(err)
-        })   
+            .then((data) => {
+                res.redirect('/')
+            })
+            .catch((err) => {
+                res.send(err)
+            })
     }
     static home(req, res) {
         User.findOne({
@@ -68,17 +68,17 @@ class Controller {
                 id: req.params.userId
             }
         })
-        .then((dataUser) => {
-            let obj = {
-                dataUser,
-                notif: req.query.notif
-            }
-            res.render('home', obj)
-        })
+            .then((dataUser) => {
+                let obj = {
+                    dataUser,
+                    notif: req.query.notif
+                }
+                res.render('home', obj)
+            })
     }
-    static logout(req,res) {
+    static logout(req, res) {
         req.session.destroy((err) => {
-            if(err) console.log(err)
+            if (err) console.log(err)
             else {
                 res.redirect('/')
             }
@@ -87,19 +87,19 @@ class Controller {
     static postComicForm(req, res) {
         User.findOne({
             where: {
-                id:req.params.userId
+                id: req.params.userId
             }
         })
-        .then((dataUser) => {
-            let obj = {
-                dataUser
-            }
-            res.render('postComicForm', obj)
-        })
+            .then((dataUser) => {
+                let obj = {
+                    dataUser
+                }
+                res.render('postComicForm', obj)
+            })
     }
     static postComic(req, res) {
         console.log(req.body)
-        const {title, imgUrl, type, synopsis} = req.body
+        const { title, imgUrl, type, synopsis } = req.body
         const createdAt = new Date()
         const updatedAt = new Date()
         Type.findOne({
@@ -107,25 +107,25 @@ class Controller {
                 name: type
             }
         })
-        .then((type) => {
+            .then((type) => {
 
-            return Comic.create({
-                title,
-                imgUrl,
-                UserId: req.params.userId,
-                TypeId: type.id,
-                createdAt,
-                updatedAt,
-                synopsis
+                return Comic.create({
+                    title,
+                    imgUrl,
+                    UserId: req.params.userId,
+                    TypeId: type.id,
+                    createdAt,
+                    updatedAt,
+                    synopsis
+                })
             })
-        })
-        .then((data) => {
-            const notif="Your Comic posted successfully!"
-            return res.redirect(`/home/${req.params.userId}/?notif=${notif}`)
-        })
-        .catch((err) => {
-            res.send(err)
-        })
+            .then((data) => {
+                const notif = "Your Comic posted successfully!"
+                return res.redirect(`/home/${req.params.userId}/?notif=${notif}`)
+            })
+            .catch((err) => {
+                res.send(err)
+            })
     }
     static readComicList(req, res) {
         let dataComic
@@ -140,23 +140,69 @@ class Controller {
                 }
             ]
         })
+            .then((data) => {
+                dataComic = data
+                return User.findOne({
+                    where: {
+                        id: req.params.userId
+                    }
+                })
+            })
+            .then((dataUser) => {
+                console.log(dataComic)
+                let obj = {
+                    dataComic,
+                    dataUser,
+                    userId: req.params.userId
+                }
+                res.render('comicList', obj)
+            })
+    }
+    static myComic(req, res) {
+        // let dataComic = 
+        // Comic.findAll({
+        //     where:{
+        //         UserId: req.params.userId
+        //     }
+        // })
+        // .then((data) => {
+        //     dataComic=data
+        //     return User.findOne({
+        //         where: {
+        //             id: req.params.userId
+        //         }
+        //     })
+        // })
+        let dataUser
+        User.findOne({
+            include: [{
+                    model: Profile
+                }],
+            where: {
+                id: req.params.userId
+            }
+        })
         .then((data) => {
-            dataComic = data
-            return User.findOne({
+            dataUser = data
+            console.log(dataUser)
+            return Comic.findAll({
+                include:[{
+                    model: Type
+                }],
                 where: {
-                    id: req.params.userId
+                    UserId: req.params.userId
                 }
             })
         })
-        .then((dataUser) => {
-            console.log(dataComic)
-            let obj ={
-                dataComic,
+        .then((dataComic) => {
+            let obj = {
                 dataUser,
-                userId: req.params.userId
+                dataComic,
+                notif:req.query.notif
             }
-            res.render('comicList', obj)
+            res.render('myComic', obj)
         })
+        
     }
 }
 
